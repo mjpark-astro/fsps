@@ -7,7 +7,7 @@
 # (Uncomment only one)
 #======================
 # GNU
-F90 = gfortran
+F90 = gfortran-9
 #---------------------
 # Intel
 #F90 = ifort
@@ -39,7 +39,7 @@ F90FLAGS = -O -cpp
 #F90FLAGS = -O3 -funroll-loops -xP -cpp
 #---------------------
 
-PROGS = simple lesssimple autosps spec_bin
+PROGS = simple profile autosps spec_bin
 
 COMMON = sps_vars.o sps_utils.o compsp.o csp_gen.o ssp_gen.o \
 	getmags.o locate.o funcint.o sps_setup.o pz_convol.o \
@@ -61,8 +61,8 @@ autosps : autosps.o $(COMMON)
 simple : simple.o $(COMMON)
 	$(F90) -o simple.exe simple.o $(COMMON)
 
-lesssimple : lesssimple.o $(COMMON)
-	$(F90) -o lesssimple.exe lesssimple.o $(COMMON)
+profile : profile.o $(COMMON)
+	$(F90) -pg -o profile.exe profile.o $(COMMON)
 
 spec_bin : spec_bin.o sps_vars.o
 	$(F90) -o spec_bin.exe spec_bin.o sps_vars.o
@@ -78,9 +78,9 @@ spec_bin.o : sps_vars.o sps_utils.o
 sps_utils.o :  sps_vars.o
 
 %.o : %.f90
-	$(F90) $(F90FLAGS) -o $@ -c $<
+	$(F90) $(F90FLAGS) -pg -o $@ -c $<
 
 %.o : nr/%.f90
-	$(F90) $(F90FLAGS) -o $@ -c $<
+	$(F90) $(F90FLAGS) -pg -o $@ -c $<
 
 

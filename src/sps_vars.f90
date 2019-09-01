@@ -7,7 +7,7 @@ MODULE SPS_VARS
 
 !-------set the spectral library------!
 #ifndef MILES
-#define MILES 1
+#define MILES 0
 #endif
 
 #ifndef BASEL
@@ -16,7 +16,7 @@ MODULE SPS_VARS
 
 ! "C3K" currently under development.  do not use.
 #ifndef C3K
-#define C3K 0
+#define C3K 1
 #endif
 
 !------set the isochrone library------!
@@ -239,9 +239,9 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: nspec=5994
 #elif (C3K)
   REAL(SP), PARAMETER :: zsol_spec = 0.0134
-  CHARACTER(5), PARAMETER :: spec_type = 'ckc14'
-  INTEGER, PARAMETER :: nzinit=6
-  INTEGER, PARAMETER :: nspec=47378  !46666 !47378 !, 26500
+  CHARACTER(10), PARAMETER :: spec_type = 'ckc14_jwst'
+  INTEGER, PARAMETER :: nzinit=11
+  INTEGER, PARAMETER :: nspec=8737  !46666 !47378 !, 26500
 #elif (BASEL)
   REAL(SP), PARAMETER :: zsol_spec = 0.020
   CHARACTER(5), PARAMETER :: spec_type = 'basel'

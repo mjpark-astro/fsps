@@ -682,8 +682,8 @@ SUBROUTINE SPS_SETUP(zin)
              zstype//'.dat',STATUS='OLD', IOSTAT=stat,ACTION='READ')
         !open MIST isochrones
         IF (isoc_type.EQ.'mist') OPEN(97,FILE=TRIM(SPS_HOME)//&
-             '/ISOCHRONES/MIST/isoc_MIST2_z'//zlegend_str(z)//'_afe'//afe_str(aa)//&
-             '.dat',STATUS='OLD',IOSTAT=stat,ACTION='READ')
+             '/ISOCHRONES/MIST/isoc_feh_z'//zlegend_str(z)//'_afe'//afe_str(aa)//&
+             '_vvcrit0.4_full.dat',STATUS='OLD',IOSTAT=stat,ACTION='READ')
         !open BaSTI isochrones
         IF (isoc_type.EQ.'bsti') OPEN(97,FILE=TRIM(SPS_HOME)//&
              '/ISOCHRONES/BaSTI/isoc_z'//zstype//'.dat',STATUS='OLD',&

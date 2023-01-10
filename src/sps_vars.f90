@@ -126,7 +126,7 @@ MODULE SPS_VARS
 
   !Use Eldridge 2017 WMBasic library for stars hotter than 25,000 K
   !or this value, whichever is larger
-  real(SP) :: logt_wmb_hot = 0.0
+  real(SP) :: logt_wmb_hot = 10.0
 
   !turn on/off a Cloudy-based nebular emission model (cont+lines)
   !if set to 2, then the nebular emission lines are added at the SSP

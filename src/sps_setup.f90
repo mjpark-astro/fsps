@@ -48,10 +48,12 @@ SUBROUTINE SPS_SETUP(zin)
   REAL(SP), DIMENSION(nagndust_spec)           :: agndust_lam=0.
   REAL(SP), DIMENSION(nagndust_spec,nagndust)  :: agndust_specinit=0.
   REAL(KIND(1.0)), ALLOCATABLE, DIMENSION(:,:,:,:,:) :: speclibinit
-  REAL(SP), DIMENSION(nspec,nzwmb,ndim_wmb_logt,ndim_wmb_logg) :: wmbsi=0.
+  REAL(SP), DIMENSION(nspec,nzwmb,ndim_wmb_logt,ndim_wmb_logg) ::
+wmbsi=0.
   REAL(SP), DIMENSION(nzwmb)     :: zwmb=0.
   REAL(SP), DIMENSION(nspec_wmb) :: wmb_lam=0.
-  REAL(SP), DIMENSION(nspec_wmb,ndim_wmb_logt,ndim_wmb_logg) :: wmb_specinit=0.
+  REAL(SP), DIMENSION(nspec_wmb,ndim_wmb_logt,ndim_wmb_logg) ::
+wmb_specinit=0.
   REAL(SP), DIMENSION(ntabmax)   :: lsflam=0.,lsfsig=0.
   REAL(SP), DIMENSION(30) :: g03lam=0., g03smc=0.
   
@@ -134,17 +136,11 @@ SUBROUTINE SPS_SETUP(zin)
      STOP 
   ENDIF
 
-  ! the MIST zlegend.dat file is in a different format; convert
+  ! the MIST zlegend.dat file is in a different format
   IF (isoc_type.EQ.'mist') THEN
      DO z=1,nz
-        READ(90,'(A5)') zlegend_str(z)
-        zstype5 = zlegend_str(z)
-        READ(zstype5(2:5),'(F4.2)') zlegend(z)
-        IF (zstype5(1:1).EQ.'m') THEN
-           zlegend(z) = 10**(-1*zlegend(z)) * zsol
-        ELSE
-           zlegend(z) = 10**(1*zlegend(z)) * zsol
-        ENDIF
+        READ(90,'(A4,F6.2)') zlegend_str(z), zlegend(z)
+        zlegend(z) = 10**zlegend(z) * zsol !convert to linear units
      ENDDO
   ELSE
      DO z=1,nz
@@ -169,7 +165,8 @@ SUBROUTINE SPS_SETUP(zin)
   IF (isoc_type.EQ.'bpss') THEN
 
      IF (time_res_incr.NE.1) THEN
-        WRITE(*,*) 'SPS_SETUP ERROR: cannot have time_res_incr>1 w/ BPASS models'
+        WRITE(*,*) 'SPS_SETUP ERROR: cannot have time_res_incr>1 w/
+BPASS models'
         STOP
      ENDIF
      
@@ -298,14 +295,16 @@ SUBROUTINE SPS_SETUP(zin)
 
   !interpolate the input spectral library to the isochrone grid
   !notice that we're interpolating at fixed Z/Zsol even in cases
-  !where the isochrones and spectra might have different Zsol. This might 
+  !where the isochrones and spectra might have different Zsol. This
+  !might 
   !in fact be the best thing to do.  Either way, its not ideal.
   DO aa=1,nafe
      DO z=1,nz
 
         i1 = MIN(MAX(locate(LOG10(zlegendinit/zsol_spec),&
              LOG10(zlegend(z)/zsol)),1),nzinit-1)
-        dz = (LOG10(zlegend(z)/zsol)-LOG10(zlegendinit(i1)/zsol_spec)) / &
+        dz = (LOG10(zlegend(z)/zsol)-LOG10(zlegendinit(i1)/zsol_spec)) /
+&
              (LOG10(zlegendinit(i1+1)/zsol_spec)-LOG10(zlegendinit(i1)/zsol_spec))
         dz = MIN(MAX(dz,0.0),1.0) !no extrapolation
 
@@ -327,7 +326,8 @@ SUBROUTINE SPS_SETUP(zin)
            nafei = 1
         ENDIF
        
-        speclib(:,z,aa,:,:) = (1-dz)*LOG10(speclibinit(:,i1,nafei,:,:)+tiny_number) + &
+        speclib(:,z,aa,:,:) =
+(1-dz)*LOG10(speclibinit(:,i1,nafei,:,:)+tiny_number) + &
              dz*LOG10(speclibinit(:,i1+1,nafei,:,:)+tiny_number)
         
         speclib(:,z,aa,:,:) = 10**speclib(:,z,aa,:,:)
@@ -390,7 +390,8 @@ SUBROUTINE SPS_SETUP(zin)
 
   !Now interpolate the input spectral library to the isochrone grid
   !notice that we're interpolating at fixed Z/Zsol even in cases
-  !where the isochrones and spectra might have different Zsol. This might 
+  !where the isochrones and spectra might have different Zsol. This
+  !might 
   !in fact be the best thing to do.  Either way, its not ideal.
   DO z=1,nz
 
@@ -425,7 +426,8 @@ SUBROUTINE SPS_SETUP(zin)
 
   !now interpolate the master Teff array to the particular Z array
   DO i=1,nz
-     i1 = MIN(MAX(locate(tagb_logz_o,LOG10(zlegend(i)/zsol_spec)),1),22-1)
+     i1 =
+MIN(MAX(locate(tagb_logz_o,LOG10(zlegend(i)/zsol_spec)),1),22-1)
      dz = (LOG10(zlegend(i)/zsol_spec)-tagb_logz_o(i1)) / &
           (tagb_logz_o(i1+1)-tagb_logz_o(i1))
      agb_logt_o(i,:) = (1-dz)*tagb_logt_o(i1,:)+dz*tagb_logt_o(i1+1,:)
@@ -517,7 +519,8 @@ SUBROUTINE SPS_SETUP(zin)
   CLOSE(96)
   !interpolate to the main spectral grid
   DO i=1,n_agb_car
-     agb_spec_car(:,i) = MAX(linterparr(aringer_lam,aringer_specinit(:,i),&
+     agb_spec_car(:,i) =
+MAX(linterparr(aringer_lam,aringer_specinit(:,i),&
           spec_lambda),tiny_number)
   ENDDO
 
@@ -527,7 +530,8 @@ SUBROUTINE SPS_SETUP(zin)
   OPEN(94,FILE=TRIM(SPS_HOME)//'/SPECTRA/Hot_spectra/ipagb.teff',&
        STATUS='OLD',iostat=stat,ACTION='READ')
   IF (stat.NE.0) THEN
-     WRITE(*,*) 'SPS_SETUP ERROR: Hot_spectra/ipagb.teff cannot be opened'
+     WRITE(*,*) 'SPS_SETUP ERROR: Hot_spectra/ipagb.teff cannot be
+opened'
      STOP 
   ENDIF
   DO i=1,ndim_pagb
@@ -567,7 +571,8 @@ SUBROUTINE SPS_SETUP(zin)
   !interpolate to the main spectral array
   DO j=1,2
      DO i=1,ndim_pagb
-        pagb_spec(:,i,j) = MAX(linterparr(pagb_lam,pagb_specinit(:,i,j),&
+        pagb_spec(:,i,j) =
+MAX(linterparr(pagb_lam,pagb_specinit(:,i,j),&
              spec_lambda),tiny_number)
      ENDDO
   ENDDO
@@ -578,7 +583,8 @@ SUBROUTINE SPS_SETUP(zin)
   OPEN(94,FILE=TRIM(SPS_HOME)//'/SPECTRA/Hot_spectra/CMFGEN_WN.teff',&
        STATUS='OLD',iostat=stat,ACTION='READ')
   IF (stat.NE.0) THEN
-     WRITE(*,*) 'SPS_SETUP ERROR: Hot_spectra/CMFGEN_WN.teff cannot be opened'
+     WRITE(*,*) 'SPS_SETUP ERROR: Hot_spectra/CMFGEN_WN.teff cannot be
+opened'
      STOP 
   ENDIF
   DO i=1,ndim_wr
@@ -590,7 +596,8 @@ SUBROUTINE SPS_SETUP(zin)
   OPEN(94,FILE=TRIM(SPS_HOME)//'/SPECTRA/Hot_spectra/CMFGEN_WC.teff',&
        STATUS='OLD',iostat=stat,ACTION='READ')
   IF (stat.NE.0) THEN
-     WRITE(*,*) 'SPS_SETUP ERROR: Hot_spectra/CMFGEN_WC.teff cannot be opened'
+     WRITE(*,*) 'SPS_SETUP ERROR: Hot_spectra/CMFGEN_WC.teff cannot be
+opened'
      STOP 
   ENDIF
   DO i=1,ndim_wr
@@ -618,8 +625,10 @@ SUBROUTINE SPS_SETUP(zin)
   
   !interpolate to the main array
   DO j=1,nz
-     i1 = MIN(MAX(locate(twrzmet,LOG10(zlegend(j)/zsol_spec)),1),SIZE(twrzmet)-1)
-     dz = (LOG10(zlegend(j)/zsol_spec)-twrzmet(i1))/(twrzmet(i1+1)-twrzmet(i1))
+     i1 =
+MIN(MAX(locate(twrzmet,LOG10(zlegend(j)/zsol_spec)),1),SIZE(twrzmet)-1)
+     dz =
+(LOG10(zlegend(j)/zsol_spec)-twrzmet(i1))/(twrzmet(i1+1)-twrzmet(i1))
      dz = MIN(MAX(dz,0.0),1.)
      DO i=1,ndim_wr
         tspecwr = (1-dz)*LOG10(twrn(:,i,i1)+tiny_number) + &
@@ -649,8 +658,10 @@ SUBROUTINE SPS_SETUP(zin)
 
   !interpolate to the main array
   DO j=1,nz
-     i1 = MIN(MAX(locate(twrzmet,LOG10(zlegend(j)/zsol_spec)),1),SIZE(twrzmet)-1)
-     dz = (LOG10(zlegend(j)/zsol_spec)-twrzmet(i1))/(twrzmet(i1+1)-twrzmet(i1))
+     i1 =
+MIN(MAX(locate(twrzmet,LOG10(zlegend(j)/zsol_spec)),1),SIZE(twrzmet)-1)
+     dz =
+(LOG10(zlegend(j)/zsol_spec)-twrzmet(i1))/(twrzmet(i1+1)-twrzmet(i1))
      dz = MIN(MAX(dz,0.0),1.)
      DO i=1,ndim_wr
         tspecwr = (1-dz)*LOG10(twrc(:,i,i1)+tiny_number) + &
@@ -682,8 +693,9 @@ SUBROUTINE SPS_SETUP(zin)
              zstype//'.dat',STATUS='OLD', IOSTAT=stat,ACTION='READ')
         !open MIST isochrones
         IF (isoc_type.EQ.'mist') OPEN(97,FILE=TRIM(SPS_HOME)//&
-             '/ISOCHRONES/MIST/isoc_feh_'//zlegend_str(z)//'_afe'//afe_str(aa)//&
-             '_vvcrit0.4_full.dat',STATUS='OLD',IOSTAT=stat,ACTION='READ')
+             '/ISOCHRONES/MIST/isoc_feh_'//TRIM(zlegend_str(z))//'_afe_'&
+             //afe_str_iso(aa)//'_vvcrit0.4_full.dat',STATUS='OLD',&
+             IOSTAT=stat,ACTION='READ')
         !open BaSTI isochrones
         IF (isoc_type.EQ.'bsti') OPEN(97,FILE=TRIM(SPS_HOME)//&
              '/ISOCHRONES/BaSTI/isoc_z'//zstype//'.dat',STATUS='OLD',&
@@ -694,7 +706,8 @@ SUBROUTINE SPS_SETUP(zin)
              IOSTAT=stat,ACTION='READ')
         
         IF (stat.NE.0) THEN
-           WRITE(*,*) 'SPS_SETUP ERROR: isochrone files cannot be opened'
+           WRITE(*,*) 'SPS_SETUP ERROR: isochrone files cannot be
+opened'
            STOP 
         END IF
         
@@ -710,17 +723,20 @@ SUBROUTINE SPS_SETUP(zin)
               IF (m.EQ.1) n_isoc = n_isoc+1
               BACKSPACE(97)
               IF (m.GT.nm) THEN
-                 WRITE(*,*) 'SPS_SETUP ERROR: number of mass points GT nm'
+                 WRITE(*,*) 'SPS_SETUP ERROR: number of mass points GT
+nm'
                  STOP
               ENDIF
               IF (isoc_type.EQ.'mist') THEN
-                 READ(97,*,IOSTAT=stat) logage,mini_isoc(z,aa,n_isoc,m),&
+                 READ(97,*,IOSTAT=stat)
+logage,mini_isoc(z,aa,n_isoc,m),&
                       mact_isoc(z,aa,n_isoc,m),logl_isoc(z,aa,n_isoc,m),&
                       logt_isoc(z,aa,n_isoc,m),logg_isoc(z,aa,n_isoc,m),&
                       ffco_isoc(z,aa,n_isoc,m),phase_isoc(z,aa,n_isoc,m),&
                       lmdot_isoc(z,aa,n_isoc,m)
               ELSE
-                 READ(97,*,IOSTAT=stat) logage,mini_isoc(z,aa,n_isoc,m),&
+                 READ(97,*,IOSTAT=stat)
+logage,mini_isoc(z,aa,n_isoc,m),&
                       mact_isoc(z,aa,n_isoc,m),logl_isoc(z,aa,n_isoc,m),&
                       logt_isoc(z,aa,n_isoc,m),logg_isoc(z,aa,n_isoc,m),&
                       ffco_isoc(z,aa,n_isoc,m),phase_isoc(z,aa,n_isoc,m)
@@ -735,14 +751,16 @@ SUBROUTINE SPS_SETUP(zin)
            
         ENDDO
 
-        WRITE(*,*) 'SPS_SETUP ERROR: didnt finish reading in the isochrones!'
+        WRITE(*,*) 'SPS_SETUP ERROR: didnt finish reading in the
+isochrones!'
         STOP
      
 20      CONTINUE
         CLOSE(97)
 
         IF (n_isoc.NE.nt) THEN 
-           WRITE(*,*) 'SPS_SETUP ERROR: number of isochrones NE nt',n_isoc,nt
+           WRITE(*,*) 'SPS_SETUP ERROR: number of isochrones NE
+nt',n_isoc,nt
            STOP
         ENDIF
         
@@ -752,7 +770,8 @@ SUBROUTINE SPS_SETUP(zin)
   !this is necessary because Geneva does not extend below 1.0 Msun
   !see imf_weight.f90 for details
   IF (isoc_type.EQ.'gnva') THEN
-     imf_lower_bound = MINVAL(mini_isoc(zmin,1,1,1:nmass_isoc(zmin,1,1)))*0.99
+     imf_lower_bound =
+MINVAL(mini_isoc(zmin,1,1,1:nmass_isoc(zmin,1,1)))*0.99
   ELSE
      imf_lower_bound = imf_lower_limit
   ENDIF
@@ -912,7 +931,8 @@ SUBROUTINE SPS_SETUP(zin)
              STATUS='OLD',iostat=stat,ACTION='READ')
      ENDIF
      IF (stat.NE.0) THEN
-        WRITE(*,*) 'SPS_SETUP ERROR: nebular cont file cannot be opened. '
+        WRITE(*,*) 'SPS_SETUP ERROR: nebular cont file cannot be opened.
+'
         STOP
      ENDIF
      !burn the header
@@ -922,7 +942,8 @@ SUBROUTINE SPS_SETUP(zin)
      DO i=1,nebnz
         DO j=1,nebnage
            DO k=1,nebnip
-              READ(99,*,iostat=stat) nebem_logz(i),nebem_age(j),nebem_logu(k)
+              READ(99,*,iostat=stat)
+nebem_logz(i),nebem_age(j),nebem_logu(k)
               READ(99,*,iostat=stat) readcontneb
               !interpolate onto the main wavelength grid
               !some values in the table are 0.0, set a floor of 1E-95
@@ -942,7 +963,8 @@ SUBROUTINE SPS_SETUP(zin)
              STATUS='OLD',iostat=stat,ACTION='READ')
      ENDIF
      IF (stat.NE.0) THEN
-        WRITE(*,*) 'SPS_SETUP ERROR: nebular line file cannot be opened. Only available for Padova or MIST isochrones.'
+        WRITE(*,*) 'SPS_SETUP ERROR: nebular line file cannot be opened.
+Only available for Padova or MIST isochrones.'
         STOP
      ENDIF
      !burn the header
@@ -952,14 +974,16 @@ SUBROUTINE SPS_SETUP(zin)
      DO i=1,nebnz
         DO j=1,nebnage
            DO k=1,nebnip
-              READ(99,*,iostat=stat) nebem_logz(i),nebem_age(j),nebem_logu(k)
+              READ(99,*,iostat=stat)
+nebem_logz(i),nebem_age(j),nebem_logu(k)
               READ(99,*,iostat=stat) nebem_line(:,i,j,k)
            ENDDO
         ENDDO
      ENDDO
      CLOSE(99)
      
-     !convert the nebem_age array to log(age), and log the emission arrays
+     !convert the nebem_age array to log(age), and log the emission
+     !arrays
      nebem_age  = LOG10(nebem_age)
      nebem_line = LOG10(nebem_line)
      
@@ -1002,7 +1026,8 @@ SUBROUTINE SPS_SETUP(zin)
   OPEN(98,FILE=TRIM(SPS_HOME)//'/SPECTRA/A0V_KURUCZ_92.SED',&
        STATUS='OLD',iostat=stat,ACTION='READ')
   IF (stat.NE.0) THEN
-     WRITE(*,*) 'SPS_SETUP ERROR: SPECTRA/A0V_KURUCZ_92.SED cannot be opened'
+     WRITE(*,*) 'SPS_SETUP ERROR: SPECTRA/A0V_KURUCZ_92.SED cannot be
+opened'
      STOP 
   ENDIF  
   !burn the header
@@ -1026,7 +1051,8 @@ SUBROUTINE SPS_SETUP(zin)
   OPEN(98,FILE=TRIM(SPS_HOME)//'/SPECTRA/SUN_STScI.SED',&
        STATUS='OLD',iostat=stat,ACTION='READ')
   IF (stat.NE.0) THEN
-     WRITE(*,*) 'SPS_SETUP ERROR: SPECTRA/SUN_STScI.SED cannot be opened'
+     WRITE(*,*) 'SPS_SETUP ERROR: SPECTRA/SUN_STScI.SED cannot be
+opened'
      STOP 
   END IF  
   DO i=1,ntlam
@@ -1079,11 +1105,13 @@ SUBROUTINE SPS_SETUP(zin)
 909  CONTINUE
 
      IF (j.GE.50000) THEN
-        WRITE(*,*) 'SPS_SETUP ERROR: did not finish reading in filter ',i
+        WRITE(*,*) 'SPS_SETUP ERROR: did not finish reading in filter
+',i
         STOP
      ENDIF
      IF (jj.EQ.0) THEN
-        WRITE(*,*) 'SPS_SETUP ERROR: error during filter definition read-in',i
+        WRITE(*,*) 'SPS_SETUP ERROR: error during filter definition
+read-in',i
         STOP
      ENDIF
 
@@ -1126,18 +1154,22 @@ SUBROUTINE SPS_SETUP(zin)
 
   !only execute this loop for the standard filter list
   IF (TRIM(alt_filter_file).EQ.'') THEN
-     !normalize the IRAC, PACS, SPIRE, and IRAS photometry to nu*fnu=const
+     !normalize the IRAC, PACS, SPIRE, and IRAS photometry to
+     !nu*fnu=const
      !Note: this turns out to be irrelevant and is the result of rather
      !confusing documentation on the IRAC website
-     lami = (/3.550,4.493,5.731,7.872,70.0,100.0,160.0,250.0,350.0,500.0,&
+     lami =
+(/3.550,4.493,5.731,7.872,70.0,100.0,160.0,250.0,350.0,500.0,&
           12.0,25.0,60.0,100.0/)*1E4
      ind=(/53,54,55,56,95,96,97,98,99,100,101,102,103,104/)
      DO j=1,14
         IF (ind(j).GT.nbands) THEN
-           WRITE(*,*) 'SPS_SETUP ERROR: trying to index a filter that does not exist!'
+           WRITE(*,*) 'SPS_SETUP ERROR: trying to index a filter that
+does not exist!'
            EXIT
         ENDIF
-        d = TSUM(spec_lambda,(spec_lambda/lami(j))**(-1.0)*bands(:,ind(j))/&
+        d =
+TSUM(spec_lambda,(spec_lambda/lami(j))**(-1.0)*bands(:,ind(j))/&
              spec_lambda)
         bands(:,ind(j)) = bands(:,ind(j)) / MAX(d,tiny_number)
      ENDDO
@@ -1148,10 +1180,12 @@ SUBROUTINE SPS_SETUP(zin)
      ind(1:3)  = (/90,91,92/)
      DO j=1,3
         IF (ind(j).GT.nbands) THEN
-           WRITE(*,*) 'SPS_SETUP ERROR: trying to index a filter that does not exist!'
+           WRITE(*,*) 'SPS_SETUP ERROR: trying to index a filter that
+does not exist!'
            EXIT
         ENDIF
-        d = TSUM(spec_lambda,(spec_lambda/lami(j))**(-2.0)*bands(:,ind(j))/&
+        d =
+TSUM(spec_lambda,(spec_lambda/lami(j))**(-2.0)*bands(:,ind(j))/&
              spec_lambda)
         bands(:,ind(j)) = bands(:,ind(j)) / MAX(d,tiny_number)
      ENDDO

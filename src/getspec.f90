@@ -86,7 +86,8 @@ SUBROUTINE GETSPEC(pset,mact,logt,lbol,logg,phase,ffco,lmdot,wght,spec)
      ENDIF
 
   !O-rich TP-AGB spectra, from Lancon & Mouhcine 2002
-  ELSE IF (phase.EQ.5.0.AND.logt.LT.3.6.AND.ffco.LE.1.0) THEN
+  ELSE IF (phase.EQ.5.0.AND.logt.LT.3.6.AND.ffco.LE.1.0 &
+       .AND.use_lw_tpagb.EQ.1) THEN
      
      flag = flag+1
      jlo  = MAX(MIN(locate(agb_logt_o(pset%zmet,:),logt),n_agb_o-1),1)
@@ -125,7 +126,7 @@ SUBROUTINE GETSPEC(pset,mact,logt,lbol,logg,phase,ffco,lmdot,wght,spec)
              ( (1-t)*agb_spec_c(:,jlo) + t*(agb_spec_c(:,jlo+1)) )
      ENDIF
 
-  !use WMBasic grid from JJ Eldridge for T>25,000K MS stars
+  !use WMBasic grid from JJ Eldridge for T>T_cut MS stars
   ELSE IF (phase.EQ.0.0.AND.logt.GT.logt_cut) THEN
 
      flag = flag+1

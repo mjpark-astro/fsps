@@ -98,14 +98,20 @@ MODULE SPS_VARS
   !whether to interpolate the SSPs in logt (0) or t (1)
   integer :: interpolation_type = 0
 
-  !The log of the minimum age to use when computing CSPs.  The spectrum for
-  !this age is taken from the youngest available SSP.  Should be less than ~3
+  !The log of the minimum age to use when computing CSPs.  The spectrum
+  !for
+  !this age is taken from the youngest available SSP.  Should be less
+  !than ~3
   real(SP) :: tiny_logt = 0.0
 
   !Use Aringer et al. (2009) Carbon star library if set
   !otherwise use Lancon & Wood (2002) empirical spectra
   INTEGER, PARAMETER :: cstar_aringer=1
 
+  !Use Lancon & Wood (2002) empirical library for TP-AGB
+  !stars if this is turned on; else use main grid
+  INTEGER, PARAMETER :: use_lw_tpagb=0
+  
   !turn on/off computation of light-weighted stellar ages
   !NB: currently only works with sfh=1,4 options
   INTEGER :: compute_light_ages=0
@@ -126,7 +132,7 @@ MODULE SPS_VARS
 
   !Use Eldridge 2017 WMBasic library for stars hotter than 25,000 K
   !or this value, whichever is larger
-  real(SP) :: logt_wmb_hot = 10.0
+  REAL(SP) :: logt_wmb_hot = 10.0
 
   !turn on/off a Cloudy-based nebular emission model (cont+lines)
   !if set to 2, then the nebular emission lines are added at the SSP
@@ -149,7 +155,8 @@ MODULE SPS_VARS
   !the spectra.  Accurate to ~0.1% and somewhat faster than the
   !correct approach.  NB: one should be careful when choosing
   !to run the slow version, as the accuracy depends on the min/max
-  !wavelength parameters.  Contact me if you are intersted in this feature.
+  !wavelength parameters.  Contact me if you are intersted in this
+  !feature.
   INTEGER :: smoothspec_fast=1
 
   !if set, smooth the spectrum in velocity space, otherwise
@@ -269,6 +276,7 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: nspec=15000
   INTEGER, PARAMETER :: nafeinit=1
   CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: afe_str=''
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: afe_str_iso=''
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: afe_val=0.0
   INTEGER, PARAMETER :: afe_sol_indx=1
 #else
@@ -279,6 +287,7 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: nspec=5994
   INTEGER, PARAMETER :: nafeinit=1
   CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: afe_str=''
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: afe_str_iso=''
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: afe_val=0.0
   INTEGER, PARAMETER :: afe_sol_indx=1
 #elif (C3K_LR)
@@ -287,7 +296,11 @@ MODULE SPS_VARS
   INTEGER, PARAMETER      :: nzinit=11
   INTEGER, PARAMETER      :: nspec=1936
 #if (AFE_FLAG)
+  ! the assumption here is that the iso and spec afe
+  ! grids are identical
   INTEGER, PARAMETER :: nafeinit=5
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: &
+       afe_str_iso=(/'m2','p0','p2','p4','p6'/)
   CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: &
        afe_str=(/'-0.2','+0.0','+0.2','+0.4','+0.6'/)
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: &
@@ -295,6 +308,7 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: afe_sol_indx=2
 #else
   INTEGER, PARAMETER :: nafeinit=1
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: afe_str_iso='p0'
   CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: afe_str='+0.0'
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: afe_val=0.0
   INTEGER, PARAMETER :: afe_sol_indx=1
@@ -303,9 +317,11 @@ MODULE SPS_VARS
   REAL(SP), PARAMETER :: zsol_spec = 0.0134
   CHARACTER(7), PARAMETER :: spec_type = 'c3k_hr'
   INTEGER, PARAMETER :: nzinit=11
-  INTEGER, PARAMETER :: nspec=10992  !11149
+  INTEGER, PARAMETER :: nspec=8737  !11149
 #if (AFE_FLAG)
   INTEGER, PARAMETER :: nafeinit=5
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: &
+       afe_str_iso=(/'m2','p0','p2','p4','p6'/)
   CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: &
        afe_str=(/'-0.2','+0.0','+0.2','+0.4','+0.6'/)
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: &
@@ -313,6 +329,7 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: afe_sol_indx=2
 #else
   INTEGER, PARAMETER :: nafeinit=1
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: afe_str_iso='p0'
   CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: afe_str='+0.0'
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: afe_val=0.0
   INTEGER, PARAMETER :: afe_sol_indx=1
@@ -361,11 +378,12 @@ MODULE SPS_VARS
 
   !------------IMF-related Constants--------------!
 
-  !Salpeter IMF index
-  REAL(SP) :: salp_ind= 2.35
   !min/max masses for the IMF
   REAL(SP) :: imf_lower_limit = 0.08, imf_upper_limit=120.
   REAL(SP) :: imf_lower_bound
+
+  !Salpeter IMF index
+  REAL(SP) :: salp_ind= 2.35
   !Chabrier 2003 IMF parameters
   REAL(SP), PARAMETER :: chab_mc=0.08, chab_sigma2=0.69*0.69,&
        chab_ind=1.3
@@ -403,7 +421,8 @@ MODULE SPS_VARS
   !Planck's constant
   REAL(SP), PARAMETER :: hplank  = 6.6261E-27
   !constant to convert mags into propert units (see getmags.f90)
-  REAL(SP), PARAMETER :: mag2cgs = LOG10(lsun/4.0/mypi/(pc2cm*pc2cm)/100.0)
+  REAL(SP), PARAMETER :: mag2cgs =
+LOG10(lsun/4.0/mypi/(pc2cm*pc2cm)/100.0)
 
   !define large and small numbers.  numbers whose abs values
   !are less than tiny_number are treated as equal to 0.0
@@ -486,12 +505,14 @@ MODULE SPS_VARS
   !arrays for stellar spectral information in HR diagram
   REAL(SP), DIMENSION(ndim_logt) :: speclib_logt=0.
   REAL(SP), DIMENSION(ndim_logg) :: speclib_logg=0.
-  REAL(KIND(1.0)), DIMENSION(nspec,nz,nafe,ndim_logt,ndim_logg) :: speclib=0.
+  REAL(KIND(1.0)), DIMENSION(nspec,nz,nafe,ndim_logt,ndim_logg) ::
+speclib=0.
 
   !arrays for the WMBasic grid
   REAL(SP), DIMENSION(ndim_wmb_logt) :: wmb_logt=0.
   REAL(SP), DIMENSION(ndim_wmb_logg) :: wmb_logg=0.
-  REAL(KIND(1.0)), DIMENSION(nspec,nz,ndim_wmb_logt,ndim_wmb_logg) :: wmb_spec=0.
+  REAL(KIND(1.0)), DIMENSION(nspec,nz,ndim_wmb_logt,ndim_wmb_logg) ::
+wmb_spec=0.
 
   !AGB library (Lancon & Mouhcine 2002)
   REAL(SP), DIMENSION(nspec,n_agb_o) :: agb_spec_o=0.
@@ -526,7 +547,8 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: numin_dustem=37, nqpah_dustem=11
   CHARACTER(6), PARAMETER :: str_dustem='THEMIS'
   REAL(SP), DIMENSION(nqpah_dustem), PARAMETER :: &
-       qpaharr = (/0.02,0.06,0.10,0.14,0.17,0.20,0.24,0.28,0.32,0.36,0.40/)/2.2*100
+       qpaharr =
+(/0.02,0.06,0.10,0.14,0.17,0.20,0.24,0.28,0.32,0.36,0.40/)/2.2*100
   REAL(SP), DIMENSION(numin_dustem) :: uminarr = &
        (/0.1,0.12,0.15,0.17,0.2,0.25,0.3,0.35,0.4,0.5,0.6,0.7,0.8,1.0,&
        1.2,1.5,1.7, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0,&
@@ -535,7 +557,8 @@ MODULE SPS_VARS
 
   REAL(SP), DIMENSION(ndim_dustem)                :: lambda_dustem=0.
   REAL(SP), DIMENSION(ndim_dustem,numin_dustem*2) :: dustem_dustem=0.
-  REAL(SP), DIMENSION(nspec,nqpah_dustem,numin_dustem*2) :: dustem2_dustem=0.
+  REAL(SP), DIMENSION(nspec,nqpah_dustem,numin_dustem*2) ::
+dustem2_dustem=0.
 
   
   !circumstellar AGB dust model (Villaume et al. 2015)
@@ -573,7 +596,8 @@ MODULE SPS_VARS
 
   !arrays for the full Z-dep SSP spectra
   REAL(SP), DIMENSION(nspec,ntfull,nz,nafe) :: spec_ssp_zz=0.
-  REAL(SP), DIMENSION(ntfull,nz,nafe)       :: mass_ssp_zz=0.,lbol_ssp_zz=0.
+  REAL(SP), DIMENSION(ntfull,nz,nafe)       ::
+mass_ssp_zz=0.,lbol_ssp_zz=0.
 
   REAL(SP), DIMENSION(ntfull) :: time_full=0.
 
@@ -603,7 +627,8 @@ MODULE SPS_VARS
 
   !structure for the output of the compsp routine
   TYPE COMPSPOUT
-     REAL(SP) :: age=0.,mass_csp=0.,lbol_csp=0.,sfr=0.,mdust=0.,mformed=0.
+     REAL(SP) ::
+age=0.,mass_csp=0.,lbol_csp=0.,sfr=0.,mdust=0.,mformed=0.
      REAL(SP), DIMENSION(nbands)  :: mags=0.
      REAL(SP), DIMENSION(nspec)   :: spec=0.
      REAL(SP), DIMENSION(nindx)   :: indx=0.

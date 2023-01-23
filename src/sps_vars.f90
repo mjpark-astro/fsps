@@ -14,6 +14,10 @@ MODULE SPS_VARS
 #define C3K_HR 0
 #endif
 
+#ifndef C3K_NS
+#define C3K_NS 0
+#endif
+
 #ifndef MILES
 #define MILES 0
 #endif
@@ -315,6 +319,11 @@ MODULE SPS_VARS
   CHARACTER(7), PARAMETER :: spec_type = 'c3k_hr'
   INTEGER, PARAMETER :: nzinit=11
   INTEGER, PARAMETER :: nspec=10992  !11149
+#elif (C3K_NS)
+  REAL(SP), PARAMETER :: zsol_spec = 0.0134
+  CHARACTER(7), PARAMETER :: spec_type = 'c3k_ns'
+  INTEGER, PARAMETER :: nzinit=13
+  INTEGER, PARAMETER :: nspec=11244  !11149
 #if (AFE_FLAG)
   INTEGER, PARAMETER :: nafeinit=5
   CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: &

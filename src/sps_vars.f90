@@ -319,6 +319,22 @@ MODULE SPS_VARS
   CHARACTER(7), PARAMETER :: spec_type = 'c3k_hr'
   INTEGER, PARAMETER :: nzinit=11
   INTEGER, PARAMETER :: nspec=10992  !11149
+#if (AFE_FLAG)
+  INTEGER, PARAMETER :: nafeinit=5
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: &
+       afe_str_iso=(/'m2','p0','p2','p4','p6'/)
+  CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: &
+       afe_str=(/'-0.2','+0.0','+0.2','+0.4','+0.6'/)
+  REAL(SP), DIMENSION(nafeinit), PARAMETER     :: &
+       afe_val=(/-0.2,0.0,0.2,0.4,0.6/)
+  INTEGER, PARAMETER :: afe_sol_indx=2
+#else
+  INTEGER, PARAMETER :: nafeinit=1
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: afe_str_iso='p0'
+  CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: afe_str='+0.0'
+  REAL(SP), DIMENSION(nafeinit), PARAMETER     :: afe_val=0.0
+  INTEGER, PARAMETER :: afe_sol_indx=1
+#endif
 #elif (C3K_NS)
   REAL(SP), PARAMETER :: zsol_spec = 0.0134
   CHARACTER(7), PARAMETER :: spec_type = 'c3k_ns'

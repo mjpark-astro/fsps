@@ -292,7 +292,7 @@ MODULE SPS_VARS
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: afe_val=0.0
   INTEGER, PARAMETER :: afe_sol_indx=1
 #elif (C3K_LR)
-  REAL(SP), PARAMETER     :: zsol_spec = 0.0134
+  REAL(SP), PARAMETER     :: zsol_spec = 0.0191
   CHARACTER(7), PARAMETER :: spec_type = 'c3k_lr'
   INTEGER, PARAMETER      :: nzinit=11
   INTEGER, PARAMETER      :: nspec=1936
@@ -315,9 +315,9 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: afe_sol_indx=1
 #endif  
 #elif (C3K_HR)
-  REAL(SP), PARAMETER :: zsol_spec = 0.0134
+  REAL(SP), PARAMETER :: zsol_spec = 0.0191
   CHARACTER(7), PARAMETER :: spec_type = 'c3k_hr'
-  INTEGER, PARAMETER :: nzinit=11
+  INTEGER, PARAMETER :: nzinit=13
   INTEGER, PARAMETER :: nspec=10992  !11149
 #if (AFE_FLAG)
   INTEGER, PARAMETER :: nafeinit=5
@@ -336,7 +336,7 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: afe_sol_indx=1
 #endif
 #elif (C3K_NS)
-  REAL(SP), PARAMETER :: zsol_spec = 0.0134
+  REAL(SP), PARAMETER :: zsol_spec = 0.0191
   CHARACTER(7), PARAMETER :: spec_type = 'c3k_ns'
   INTEGER, PARAMETER :: nzinit=13
   INTEGER, PARAMETER :: nspec=11244  !11149

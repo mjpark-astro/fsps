@@ -263,7 +263,7 @@ MODULE SPS_VARS
   REAL(SP), PARAMETER :: zsol_spec = 0.0134
   CHARACTER(11), PARAMETER :: spec_type = 'c3k_afe+0.0'
   INTEGER, PARAMETER :: nzinit=11
-  INTEGER, PARAMETER :: nspec=11149
+  INTEGER, PARAMETER :: nspec=11244
 #elif (BASEL)
   REAL(SP), PARAMETER :: zsol_spec = 0.020
   CHARACTER(5), PARAMETER :: spec_type = 'basel'

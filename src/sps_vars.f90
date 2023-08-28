@@ -296,7 +296,7 @@ MODULE SPS_VARS
   !max number of lines in tabulated SFH, LSF
   INTEGER, PARAMETER :: ntabmax=20000
   !dimensions of BaSeL library
-  INTEGER, PARAMETER :: ndim_logt=68, ndim_logg=19
+  INTEGER, PARAMETER :: ndim_logt=80, ndim_logg=14
   !number of O-rich, C-rich AGB spectra (and Aringer C-rich spec)
   INTEGER, PARAMETER :: n_agb_o=9, n_agb_c=5, n_agb_car=9
   !number of post-AGB spectra

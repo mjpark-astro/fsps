@@ -290,7 +290,7 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: nzinit=5
   INTEGER, PARAMETER :: nspec=5994
   INTEGER, PARAMETER :: nafeinit=1
-  CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: afe_str=''
+  CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: afe_str='+0.0'
   CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: afe_str_iso='p0'
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: afe_val=0.0
   INTEGER, PARAMETER :: afe_sol_indx=1

@@ -291,7 +291,7 @@ MODULE SPS_VARS
   INTEGER, PARAMETER :: nspec=5994
   INTEGER, PARAMETER :: nafeinit=1
   CHARACTER(4), DIMENSION(nafeinit), PARAMETER :: afe_str=''
-  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: afe_str_iso=''
+  CHARACTER(2), DIMENSION(nafeinit), PARAMETER :: afe_str_iso='p0'
   REAL(SP), DIMENSION(nafeinit), PARAMETER     :: afe_val=0.0
   INTEGER, PARAMETER :: afe_sol_indx=1
 #elif (C3K_LR)

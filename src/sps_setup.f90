@@ -247,31 +247,31 @@ SUBROUTINE SPS_SETUP(zin)
   !read in primary logg and logt arrays
   !NB: these are the same for all spectral libraries
   IF (spec_type.EQ.'miles') THEN
-      OPEN(91,FILE=TRIM(SPS_HOME)//'/SPECTRA/BaSeL3.1/basel_logt.dat',&
-            STATUS='OLD',iostat=stat,ACTION='READ')
-      DO i=1,ndim_logt
-         READ(91,*) speclib_logt(i)
-      ENDDO
-      CLOSE(91)
-      OPEN(91,FILE=TRIM(SPS_HOME)//'/SPECTRA/BaSeL3.1/basel_logg.dat',&
-            STATUS='OLD',iostat=stat,ACTION='READ')
-      DO i=1,ndim_logg
-         READ(91,*) speclib_logg(i)
-      ENDDO
-      CLOSE(91)
+     OPEN(91,FILE=TRIM(SPS_HOME)//'/SPECTRA/BaSeL3.1/basel_logt.dat',&
+           STATUS='OLD',iostat=stat,ACTION='READ')
+     DO i=1,ndim_logt
+        READ(91,*) speclib_logt(i)
+     ENDDO
+     CLOSE(91)
+     OPEN(91,FILE=TRIM(SPS_HOME)//'/SPECTRA/BaSeL3.1/basel_logg.dat',&
+           STATUS='OLD',iostat=stat,ACTION='READ')
+     DO i=1,ndim_logg
+        READ(91,*) speclib_logg(i)
+     ENDDO
+     CLOSE(91)
   ELSE IF (spec_type(1:3).EQ.'c3k') THEN
-      OPEN(91,FILE=TRIM(SPS_HOME)//'/SPECTRA/logt.dat',&
-            STATUS='OLD',iostat=stat,ACTION='READ')
-      DO i=1,ndim_logt
-         READ(91,*) speclib_logt(i)
-      ENDDO
-      CLOSE(91)
-      OPEN(91,FILE=TRIM(SPS_HOME)//'/SPECTRA/logg.dat',&
-            STATUS='OLD',iostat=stat,ACTION='READ')
-      DO i=1,ndim_logg
-         READ(91,*) speclib_logg(i)
-      ENDDO
-      CLOSE(91)
+     OPEN(91,FILE=TRIM(SPS_HOME)//'/SPECTRA/logt.dat',&
+           STATUS='OLD',iostat=stat,ACTION='READ')
+     DO i=1,ndim_logt
+        READ(91,*) speclib_logt(i)
+     ENDDO
+     CLOSE(91)
+     OPEN(91,FILE=TRIM(SPS_HOME)//'/SPECTRA/logg.dat',&
+      STATUS='OLD',iostat=stat,ACTION='READ')
+     DO i=1,ndim_logg
+        READ(91,*) speclib_logg(i)
+     ENDDO
+     CLOSE(91)
 
   !loop over [a/Fe]
   DO aa=1,nafeinit

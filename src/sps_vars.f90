@@ -383,7 +383,11 @@ MODULE SPS_VARS
   !dimensions of BaSeL library
   #if (MILES)
     INTEGER, PARAMETER :: ndim_logt=68, ndim_logg=19
-  #else
+  #elif (C3K_LR)
+    INTEGER, PARAMETER :: ndim_logt=80, ndim_logg=14
+  #elif (C3K_HR)
+    INTEGER, PARAMETER :: ndim_logt=80, ndim_logg=14
+  #elif (C3K_NS)
     INTEGER, PARAMETER :: ndim_logt=80, ndim_logg=14
   #endif
   !number of O-rich, C-rich AGB spectra (and Aringer C-rich spec)

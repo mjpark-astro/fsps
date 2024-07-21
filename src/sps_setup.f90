@@ -272,6 +272,7 @@ SUBROUTINE SPS_SETUP(zin)
         READ(91,*) speclib_logg(i)
      ENDDO
      CLOSE(91)
+  ENDIF
 
   !loop over [a/Fe]
   DO aa=1,nafeinit
